@@ -1,0 +1,15 @@
+{
+  "name": "x-pulse-monitor",
+  "private": true,
+  "scripts": {
+    "dev:web": "turbo run dev --filter=web",
+    "build": "turbo run build",
+    "cli": "turbo run cli --filter=cli --",
+    "cli:init": "turbo run init --filter=cli --",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

@@ -1,0 +1,41 @@
+# Environment variables & secrets
+.env
+.env.local
+wallet.json
+
+# Python
+__pycache__/
+*.pyc
+venv/
+packages/bridge/venv/
+packages/bridge/__pycache__/
+
+# Node.js / Turborepo
+node_modules/
+.turbo/
+dist/
+.next/
+*.log
+
+# Build outputs
+apps/cli/dist/
+apps/web/.next/
+apps/web/out/
+
+# AO / Arweave
+*.db
+arweave.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,23 @@
+{
+  "name": "cli",
+  "version": "0.1.0",
+  "bin": {
+    "x-pulse": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "cli": "ts-node src/index.ts",
+    "init": "ts-node src/commands/init.ts"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "inquirer": "^13.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}
