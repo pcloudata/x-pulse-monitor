@@ -1,34 +1,45 @@
 # Environment variables & secrets
 .env
 .env.local
+.env.*.local
+
+# AO / Arweave sensitive files
 wallet.json
+arweave.json
+*.arweave
+ao-wallet.json
 
 # Python
 __pycache__/
 *.pyc
+*.pyo
 venv/
 packages/bridge/venv/
 packages/bridge/__pycache__/
+
+# Local XMCP Server logs & data
+mcp/xmcp-server/logs/
+*.log
+mcp.log
+xmcp.log
 
 # Node.js / Turborepo
 node_modules/
 .turbo/
 dist/
 .next/
-*.log
+out/
 
 # Build outputs
 apps/cli/dist/
 apps/web/.next/
 apps/web/out/
 
-# AO / Arweave
-*.db
-arweave.json
-
-# OS
+# Temporary / OS files
 .DS_Store
 Thumbs.db
+*.tmp
+*.temp
 
 # IDE / Editors
 .vscode/
@@ -36,6 +47,5 @@ Thumbs.db
 *.swp
 *.swo
 
-# Temporary files
-*.tmp
-*.temp
+# Local development data
+packages/bridge/data/
