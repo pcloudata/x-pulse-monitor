@@ -49,3 +49,8 @@ Thumbs.db
 
 # Local development data
 packages/bridge/data/
+
+# Official XMCP (keeping for future reference but ignoring venv and logs)
+mcp/xmcp-server/venv/
+mcp/xmcp-server/__pycache__/
+mcp/xmcp-server/*.log
