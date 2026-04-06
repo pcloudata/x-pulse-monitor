@@ -1,64 +1,67 @@
 # X Pulse Monitor
 
-**Autonomous social intelligence platform** — Real-time X monitoring powered by **Claude + AO agents**.
+**Autonomous X (Twitter) monitoring SaaS** built with **Claude + AO agents**.
 
-Monitor keywords, brands, or topics on X, get intelligent insights, store results permanently on Arweave, and enable voice conversations between agents.
+Real-time social intelligence: Monitor keywords, get Claude-powered insights, store results permanently on Arweave, and enable agent-to-agent conversations.
 
-## ✨ Features
+## Current Status
 
-- Real-time X data via MCP
-- Claude-powered analysis and reasoning
-- Persistent & verifiable AO agents
-- Voice-enabled agent-to-agent conversation (Claude ↔ AO)
-- Easy-to-use CLI (`x-pulse`)
-- Hybrid architecture (CLI + future Web Dashboard)
+- ✅ CLI-first experience (`x-pulse`)
+- ✅ Real Claude 3.5 Sonnet integration
+- ✅ Bridge + MCP system
+- ✅ One-command dev environment
+- ✅ Multi-agent loop (Claude ↔ AO simulation)
+- 🔄 AO persistent agents (in progress)
+- 🔄 Web Dashboard (planned)
+- 🔄 Voice conversations (planned)
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/pcloudata/x-pulse-monitor.git
+git clone <your-repo>
 cd x-pulse-monitor
 pnpm install
 
-# Run interactive setup
+# 1. Setup (one time)
 pnpm cli:init
 
-Start the systembash
+# 2. Start services
+./scripts/dev-start.sh
 
-# Terminal 1: Start Bridge + MCP
-cd packages/bridge && ./start.sh
+Main Commandsbash
 
-# Terminal 2: Start Simple MCP
-cd ../../mcp/simple-mcp && ./start.sh
-
-# Terminal 3: Run monitoring
+# Monitor a topic
 pnpm cli monitor "AO Arweave" --voice
 
-Available CLI Commandspnpm cli:init — Setup wizard (API keys)
-pnpm cli monitor "<query>" [--voice] — Start monitoring
-pnpm cli start-multi-agent [--voice] — Full autonomous loop (coming soon)
+# Start autonomous multi-agent loop
+pnpm cli start-multi-agent --voice
 
-Project Structure
+Developmentbash
 
-x-pulse-monitor/
-├── apps/cli/          → x-pulse command line tool
-├── apps/web/          → Future SaaS dashboard
-├── packages/bridge/   → Python backend (Claude + Bridge)
-├── mcp/simple-mcp/    → X tool interface
-├── packages/ao-processes/ → AO Lua agents
-└── README.md
+# Start everything with one command
+./scripts/dev-start.sh
+
+# In another terminal:
+pnpm cli start-multi-agent --voice
+
+Project Structureapps/cli/ — Main x-pulse tool (developer friendly)
+packages/bridge/ — Python backend (Claude + logic)
+mcp/simple-mcp/ — X tools interface
+packages/ao-processes/ — AO Lua agents
+scripts/dev-start.sh — One-command local dev
 
 Tech StackCLI: TypeScript + Commander.js
-AI: Anthropic Claude + MCP
-Backend: FastAPI + Python
-Decentralized Compute: AO + Arweave
-Voice: ElevenLabs + Whisper (planned)
+AI: Claude 3.5 Sonnet (real API)
+Backend: FastAPI
+Decentralized: AO + Arweave (coming)
+Dev Experience: Clean scripts and CLI
 
-RoadmapCLI + Interactive setup
-Bridge + MCP integration
-Full autonomous multi-agent system
-Real official XMCP
-Beautiful Next.js dashboard
-One-command dev environment
+RoadmapCLI foundation + init wizard
+Real Claude integration
+Multi-agent loop
+Real AO persistent processes
+Web Dashboard
+Voice agent conversations (ElevenLabs)
+Official XMCP integration
 
-Made for builders in the AO + AI Agent ecosystem.Star  if you're excited about autonomous social agents!
+Made for developers and autonomous agent builders.Star  if you're building in the AO + AI space!
