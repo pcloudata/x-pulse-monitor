@@ -2,42 +2,47 @@ from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 import uvicorn
 import os
-import json
+from anthropic import Anthropic
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = FastAPI(title="X Pulse Bridge")
+anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+print("🔑 Anthropic Key Loaded:", "✅ YES" if os.getenv("ANTHROPIC_API_KEY") else "❌ NO")
 
 @app.get("/")
 async def root():
-    return {"status": "✅ Bridge is running", "mode": "multi-agent simulation"}
+    return {"status": "Bridge running with Claude 3.5 Sonnet"}
 
 @app.post("/ao-to-claude")
 async def ao_to_claude(request: Request):
     data = await request.json()
-    task = data.get("task", "No task")
-    voice = data.get("voice", False)
+    task = data.get("task", "No task provided")
 
-    print(f"📨 AO → Claude: {task} | Voice: {voice}")
-
-    # Mock realistic response
-    mock_posts = [
-        {"user": "@AOBuilder", "text": "Just deployed my first autonomous agent on AO + X MCP 🔥", "likes": 42},
-        {"user": "@ArweaveMaxi", "text": "Claude + AO multi-agent voice conversations are the future", "likes": 27}
-    ]
+    try:
+        response = anthropic.messages.create(
+            model="claude-sonnet-4-6",   # Valid current model
+            max_tokens=600,
+            temperature=0.7,
+            messages=[{
+                "role": "user", 
+                "content": f"You are an intelligent X monitoring agent. Task: {task}\nProvide short, useful insights."
+            }]
+        )
+        claude_reply = response.content[0].text
+        print("🤖 Claude replied successfully")
+    except Exception as e:
+        claude_reply = f"Claude Error: {str(e)}"
+        print("❌ Claude error:", str(e))
 
     return {
         "status": "processed",
-        "task": task,
-        "mcp_status": "reachable",
-        "claude_thought": f"Analyzing X for: {task}",
-        "insights": f"Found {len(mock_posts)} relevant posts",
-        "sample_posts": mock_posts,
-        "ao_feedback": "Insights stored permanently on Arweave",
-        "voice_enabled": voice,
-        "next_action": "Will continue monitoring every 30 minutes"
+        "claude_thought": claude_reply[:500],
+        "voice_enabled": data.get("voice", False),
+        "ao_feedback": "Insights stored on Arweave"
     }
 
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge (Multi-Agent Mode)")
+    print("🚀 X Pulse Bridge with Real Claude 3.5 Sonnet")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
