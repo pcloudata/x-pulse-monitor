@@ -7,16 +7,16 @@ export default async function startMultiAgent(options: any) {
 
   try {
     const response = await axios.post('http://127.0.0.1:8001/ao-to-claude', {
-      task: "Start autonomous multi-agent cycle with voice if enabled",
-      voice: !!options.voice,
-      mode: "multi-agent"
+      task: "Run continuous X monitoring on AO Arweave ecosystem and summarize key insights",
+      voice: !!options.voice
     });
 
-    console.log(chalk.green('✅ Multi-agent loop initiated!'));
-    console.log(chalk.cyan('Bridge Response:'), response.data);
-    console.log('\nAgents are now talking to each other autonomously...');
-    console.log('Press Ctrl+C to stop the loop.');
+    console.log(chalk.green('✅ Multi-agent cycle started!'));
+    console.log(chalk.cyan('\nClaude Response:'));
+    console.log(response.data.claude_thought);
+    console.log(chalk.gray('\n' + response.data.ao_feedback));
+    
   } catch (error: any) {
-    console.error(chalk.red('❌ Failed to start multi-agent loop:'), error.message);
+    console.error(chalk.red('❌ Failed to connect to bridge:'), error.message);
   }
 }
