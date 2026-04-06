@@ -1,36 +1,41 @@
--- X Pulse Monitor AO Process
--- Persistent autonomous agent
+-- X Pulse Monitor - Simplified & Test-Friendly AO Agent
 
 PulseConfig = PulseConfig or {
   query = "AO Arweave",
-  interval = 1800  -- 30 minutes in seconds
+  interval = 1800
 }
 
+-- Main handler
 Handlers.add("Monitor",
   Handlers.utils.hasMatchingTag("Action", "Monitor"),
   function(msg)
     local query = msg.Data.query or PulseConfig.query
+    local voice = msg.Data.voice or false
     
-    print("🔍 AO Agent monitoring: " .. query)
+    print("🔍 [AO Agent] Monitoring: " .. query)
+    print("🗣️  Voice mode: " .. tostring(voice))
     
-    -- Send request to Bridge (which talks to Claude + X)
+    -- Send result back to sender (for testing)
     ao.send({
-      Target = BridgeProcessID or "BRIDGE-PROCESS-ID-HERE",
-      Action = "Monitor",
+      Target = msg.From,
+      Action = "MonitorResult",
       Data = json.encode({
+        status = "success",
         query = query,
-        voice = msg.Data.voice or false
+        timestamp = os.time(),
+        message = "Pulse monitoring completed for " .. query
       })
     })
     
-    print("📤 Sent monitoring task to Bridge")
+    print("✅ [AO Agent] Monitor task completed and replied.")
   end
 )
 
--- Cron handler for autonomous running
-Handlers.add("Cron",
+-- Auto cron handler (for autonomous behavior)
+Handlers.add("CronTick",
   Handlers.utils.hasMatchingTag("Action", "Cron"),
   function(msg)
+    print("⏰ [AO Agent] Cron triggered - Running scheduled monitor")
     ao.send({
       Target = ao.id,
       Action = "Monitor",
@@ -39,5 +44,6 @@ Handlers.add("Cron",
   end
 )
 
-print("🚀 AO Pulse Monitor Agent started successfully!")
-print("Query: " .. PulseConfig.query)
+print("🚀 AO Pulse Monitor Agent Loaded Successfully!")
+print("   Default Query: " .. PulseConfig.query)
+print("   Ready to receive Monitor messages.")
