@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 import initCommand from './commands/init';
 import monitorCommand from './commands/monitor';
+import multiAgentCommand from './commands/multi-agent';
 
 const program = new Command();
 
@@ -22,5 +23,10 @@ program
   .option('--interval <minutes>', 'Monitoring interval', '30')
   .option('--voice', 'Enable voice mode')
   .action(monitorCommand);
+
+program
+  .command('start-multi-agent')
+  .option('--voice', 'Enable voice conversation between agents')
+  .action(multiAgentCommand);
 
 program.parse(process.argv);
