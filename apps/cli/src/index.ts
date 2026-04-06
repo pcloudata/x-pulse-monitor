@@ -2,6 +2,9 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
+import initCommand from './commands/init';
+import monitorCommand from './commands/monitor';
+
 const program = new Command();
 
 program
@@ -12,18 +15,12 @@ program
 program
   .command('init')
   .description('Interactive setup wizard')
-  .action(async () => {
-    const initCommand = (await import('./commands/init.js')).default;
-    await initCommand();
-  });
+  .action(initCommand);
 
 program
   .command('monitor <query>')
   .option('--interval <minutes>', 'Monitoring interval', '30')
   .option('--voice', 'Enable voice mode')
-  .action((query, options) => {
-    console.log(chalk.blue(`🔍 Monitoring: "${query}"`));
-    console.log(chalk.gray(`Voice mode: ${!!options.voice}`));
-  });
+  .action(monitorCommand);
 
 program.parse(process.argv);
