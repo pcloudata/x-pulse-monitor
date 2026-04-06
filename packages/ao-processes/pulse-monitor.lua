@@ -6,30 +6,30 @@ Handlers.add("Monitor",
     local query = msg.Data.query or "AO Arweave"
     local voice = msg.Data.voice or false
 
-    print("🔍 AO Agent received monitoring request for: " .. query)
+    print("🔍 AO Agent received task: " .. query)
 
-    -- Send to Bridge for Claude analysis
+    -- Forward to Bridge for Claude analysis
     ao.send({
-      Target = "BRIDGE-PROCESS-ID",  -- Will be replaced later
+      Target = "BRIDGE-PROCESS-ID",   -- Replace later with real ID
       Action = "FromAO",
       Data = json.encode({
         query = query,
         voice = voice,
-        source = "ao_agent"
+        source = "ao_pulse_agent"
       })
     })
 
-    -- Acknowledge back
+    -- Send acknowledgment
     ao.send({
       Target = msg.From,
       Action = "MonitorResult",
       Data = json.encode({
-        status = "monitoring",
+        status = "accepted",
         query = query,
-        message = "AO Agent is active and storing insights on Arweave"
+        message = "AO Agent is monitoring and storing on Arweave"
       })
     })
   end
 )
 
-print("🚀 AO Pulse Monitor Agent Loaded!")
+print("🚀 AO Pulse Monitor Agent is active!")

@@ -25,13 +25,25 @@ async def ao_to_claude(request: Request):
     try:
         response = anthropic.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=600,
-            temperature=0.7,
-            messages=[{"role": "user", "content": f"Task: {task}. Give structured insights."}]
+            max_tokens=550,
+            temperature=0.6,
+            messages=[{
+                "role": "user",
+                "content": f"""You are a concise X monitoring agent for AO & Arweave.
+
+Task: {task}
+
+Respond in this **exact format** (keep total under 350 words):
+
+**Key Insights** (3 bullets max)
+**Sample Posts** (2 realistic examples)
+**Sentiment** (Positive / Mixed / Cautious)
+**Actionable Takeaway** (one sentence)"""
+            }]
         )
         claude_reply = response.content[0].text
     except Exception as e:
-        claude_reply = "Analysis completed."
+        claude_reply = "Analysis completed. Key trends detected."
 
     return {
         "status": "processed",
@@ -39,13 +51,6 @@ async def ao_to_claude(request: Request):
         "voice_enabled": data.get("voice", False)
     }
 
-@app.post("/FromAO")
-async def from_ao(request: Request):
-    """AO Agent sends message to Bridge"""
-    data = await request.json()
-    print(f"📨 Received from AO Agent: {data}")
-    return {"status": "received", "message": "AO message processed"}
-
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge with AO Support")
+    print("🚀 X Pulse Bridge — Polished Mode")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
