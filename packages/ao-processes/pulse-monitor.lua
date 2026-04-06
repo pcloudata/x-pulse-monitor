@@ -4,15 +4,18 @@ Handlers.add("Monitor",
   Handlers.utils.hasMatchingTag("Action", "Monitor"),
   function(msg)
     local query = msg.Data.query or "AO Arweave"
-    print("🔍 AO Agent monitoring: " .. query)
+    local voice = msg.Data.voice or false
+
+    print("🔍 [AO Agent] Monitoring: " .. query)
 
     -- Forward to Bridge
     ao.send({
-      Target = "BRIDGE-PROCESS",  -- placeholder
+      Target = "BRIDGE-PROCESS",   -- placeholder
       Action = "FromAO",
       Data = json.encode({
         query = query,
-        source = "ao_pulse_agent"
+        voice = voice,
+        source = "ao_pulse"
       })
     })
 
@@ -23,10 +26,10 @@ Handlers.add("Monitor",
       Data = json.encode({
         status = "monitoring",
         query = query,
-        message = "AO Agent active - insights will be stored on Arweave"
+        message = "AO Agent is active. Insights stored on Arweave."
       })
     })
   end
 )
 
-print("🚀 AO Pulse Monitor Agent Ready")
+print("🚀 AO Pulse Monitor Agent is ready!")

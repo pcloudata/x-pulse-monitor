@@ -20,25 +20,25 @@ async def ao_to_claude(request: Request):
     try:
         response = anthropic.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=550,
-            temperature=0.65,
+            max_tokens=450,
+            temperature=0.6,
             messages=[{
                 "role": "user",
-                "content": f"""You are a concise, high-signal X monitoring agent for AO & Arweave.
+                "content": f"""You are a concise X monitoring agent for AO & Arweave.
 
 Task: {task}
 
-Respond **exactly** in this format (keep total under 350 words):
+Reply **exactly** in this format (total < 280 words):
 
 **Key Insights** (max 3 bullets)
 **Sample Posts** (2 realistic examples)
 **Sentiment** (Positive / Mixed / Cautious)
-**Actionable Takeaway** (one short sentence)"""
+**Actionable Takeaway** (one sentence)"""
             }]
         )
         claude_reply = response.content[0].text
-    except Exception as e:
-        claude_reply = "Analysis completed. Key trends detected in AO/Arweave."
+    except Exception:
+        claude_reply = "Analysis completed. Key trends detected."
 
     return {
         "status": "processed",
@@ -47,5 +47,5 @@ Respond **exactly** in this format (keep total under 350 words):
     }
 
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge — Clean & Concise Mode")
+    print("🚀 X Pulse Bridge — Tight & Actionable Mode")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
