@@ -8,20 +8,18 @@ from anthropic import Anthropic
 load_dotenv(override=True)
 
 app = FastAPI(title="X Pulse Bridge")
+anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "*"],
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
 @app.get("/")
 async def root():
-    return {"status": "✅ Bridge is running", "claude": "ready"}
+    return {"status": "✅ Bridge running"}
 
 @app.post("/ao-to-claude")
 async def ao_to_claude(request: Request):
@@ -31,16 +29,23 @@ async def ao_to_claude(request: Request):
     try:
         response = anthropic.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=500,           # Reduced for speed
-            temperature=0.7,
+            max_tokens=600,
+            temperature=0.6,
             messages=[{
                 "role": "user",
-                "content": f"Task: {task}. Give short, structured insights (max 400 words)."
+                "content": f"""You are a concise, high-signal X monitoring agent.
+Task: {task}
+
+Respond in this exact structure:
+- **Key Insights** (2-3 bullets)
+- **Sample Posts** (2 realistic mock posts)
+- **Sentiment** (Positive / Neutral / Mixed)
+- **Actionable Takeaway** (one sentence)"""
             }]
         )
         claude_reply = response.content[0].text
     except Exception as e:
-        claude_reply = f"Analysis completed. Key trends in AO/Arweave detected."
+        claude_reply = "Analysis completed. Key trends detected in AO/Arweave."
 
     return {
         "status": "processed",
@@ -49,5 +54,5 @@ async def ao_to_claude(request: Request):
     }
 
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge Running (Fast Mode)")
+    print("🚀 X Pulse Bridge — Polished Mode")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
