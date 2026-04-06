@@ -1,41 +1,35 @@
--- X Pulse Monitor AO Agent - v0.2
-
-PulseConfig = PulseConfig or {
-  query = "AO Arweave",
-  interval = 1800
-}
+-- X Pulse Monitor AO Agent
 
 Handlers.add("Monitor",
   Handlers.utils.hasMatchingTag("Action", "Monitor"),
   function(msg)
-    local query = msg.Data.query or PulseConfig.query
+    local query = msg.Data.query or "AO Arweave"
     local voice = msg.Data.voice or false
 
-    print("🔍 AO Pulse Agent received task: " .. query)
+    print("🔍 AO Agent received monitoring request for: " .. query)
 
     -- Send to Bridge for Claude analysis
     ao.send({
-      Target = "BRIDGE-PROCESS-ID",   -- We'll replace with real ID later
+      Target = "BRIDGE-PROCESS-ID",  -- Will be replaced later
       Action = "FromAO",
       Data = json.encode({
         query = query,
         voice = voice,
-        from_ao = true
+        source = "ao_agent"
       })
     })
 
-    -- Reply to sender
+    -- Acknowledge back
     ao.send({
       Target = msg.From,
       Action = "MonitorResult",
       Data = json.encode({
-        status = "accepted",
+        status = "monitoring",
         query = query,
-        message = "AO Agent is monitoring and will store insights on Arweave"
+        message = "AO Agent is active and storing insights on Arweave"
       })
     })
   end
 )
 
-print("🚀 AO Pulse Monitor Agent is ready!")
-print("Query: " .. PulseConfig.query)
+print("🚀 AO Pulse Monitor Agent Loaded!")

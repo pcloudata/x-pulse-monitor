@@ -17,10 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    return {"status": "✅ Bridge running with AO support"}
-
 @app.post("/ao-to-claude")
 async def ao_to_claude(request: Request):
     data = await request.json()
@@ -45,12 +41,11 @@ async def ao_to_claude(request: Request):
 
 @app.post("/FromAO")
 async def from_ao(request: Request):
-    """AO sends message to Bridge"""
+    """AO Agent sends message to Bridge"""
     data = await request.json()
-    print(f"📨 Received from AO: {data}")
-    # Here we can trigger Claude analysis
-    return {"status": "received_from_ao"}
+    print(f"📨 Received from AO Agent: {data}")
+    return {"status": "received", "message": "AO message processed"}
 
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge with AO Integration")
+    print("🚀 X Pulse Bridge with AO Support")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
