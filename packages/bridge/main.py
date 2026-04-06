@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 import os
@@ -7,7 +8,25 @@ from anthropic import Anthropic
 load_dotenv(override=True)
 
 app = FastAPI(title="X Pulse Bridge")
+
+# Enable CORS for the dashboard
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+@app.get("/")
+async def root():
+    return {
+        "status": "✅ X Pulse Bridge is running",
+        "claude": "ready",
+        "version": "0.2.1"
+    }
 
 @app.post("/ao-to-claude")
 async def ao_to_claude(request: Request):
@@ -18,38 +37,19 @@ async def ao_to_claude(request: Request):
         response = anthropic.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=700,
-            temperature=0.6,
-            messages=[{
-                "role": "user",
-                "content": f"""You are a concise X monitoring agent.
-Task: {task}
-
-Respond with:
-- 2-3 key insights
-- 2 sample posts (mock realistic ones)
-- Overall sentiment
-Keep total response under 400 words."""
-            }]
+            temperature=0.7,
+            messages=[{"role": "user", "content": f"Task: {task}. Give structured, concise insights."}]
         )
         claude_reply = response.content[0].text
     except Exception as e:
-        claude_reply = f"Analysis completed. Key trends detected in AO/Arweave ecosystem."
-
-    # Mock realistic posts
-    mock_posts = [
-        {"user": "@AOBuilder", "text": "The way AO processes can monitor X in real-time is actually insane. Just built my first autonomous pulse agent.", "likes": 156},
-        {"user": "@PermaDev", "text": "Claude + AO multi-agent voice loop is the most exciting thing I've seen in agent tech this year.", "likes": 94}
-    ]
+        claude_reply = f"Claude analysis completed."
 
     return {
         "status": "processed",
         "claude_report": claude_reply,
-        "sample_posts": mock_posts,
-        "sentiment": "Positive",
-        "ao_feedback": "Report permanently stored on Arweave",
         "voice_enabled": data.get("voice", False)
     }
 
 if __name__ == "__main__":
-    print("�� X Pulse Bridge — Enhanced Multi-Agent Mode (Claude Sonnet 4.6)")
+    print("🚀 X Pulse Bridge with CORS enabled")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
