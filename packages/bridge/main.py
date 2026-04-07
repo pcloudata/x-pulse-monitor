@@ -4,11 +4,19 @@ from dotenv import load_dotenv
 import uvicorn
 import os
 from anthropic import Anthropic
+from elevenlabs import ElevenLabs
 
-load_dotenv(override=True)
+# === FORCE LOAD ROOT .env ===
+load_dotenv(dotenv_path="../../.env", override=True)
 
 app = FastAPI(title="X Pulse Bridge")
+
+# Debug key loading
+print("🔑 ANTHROPIC_API_KEY loaded:", "✅" if os.getenv("ANTHROPIC_API_KEY") else "❌")
+print("🔑 ELEVENLABS_API_KEY loaded:", "✅" if os.getenv("ELEVENLABS_API_KEY") else "❌")
+
 anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+eleven = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
@@ -16,36 +24,39 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 async def ao_to_claude(request: Request):
     data = await request.json()
     task = data.get("task", "Monitor AO Arweave")
+    voice_mode = data.get("voice", False)
 
     try:
         response = anthropic.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=450,
-            temperature=0.6,
-            messages=[{
-                "role": "user",
-                "content": f"""You are a concise X monitoring agent for AO & Arweave.
-
-Task: {task}
-
-Reply **exactly** in this format (total < 280 words):
-
-**Key Insights** (max 3 bullets)
-**Sample Posts** (2 realistic examples)
-**Sentiment** (Positive / Mixed / Cautious)
-**Actionable Takeaway** (one sentence)"""
-            }]
+            max_tokens=500,
+            temperature=0.65,
+            messages=[{"role": "user", "content": f"Task: {task}. Give structured insights."}]
         )
         claude_reply = response.content[0].text
-    except Exception:
-        claude_reply = "Analysis completed. Key trends detected."
+    except Exception as e:
+        claude_reply = "Analysis completed."
+
+    voice_generated = False
+    if voice_mode:
+        try:
+            audio = eleven.generate(
+                text=claude_reply[:700],
+                voice="Rachel",
+                model="eleven_turbo_v2_5"
+            )
+            voice_generated = True
+            print("🗣️ Voice generated successfully with ElevenLabs!")
+        except Exception as e:
+            print("Voice generation failed:", str(e)[:100])
 
     return {
         "status": "processed",
         "claude_report": claude_reply,
-        "voice_enabled": data.get("voice", False)
+        "voice_enabled": voice_mode,
+        "voice_generated": voice_generated
     }
 
 if __name__ == "__main__":
-    print("🚀 X Pulse Bridge — Tight & Actionable Mode")
+    print("🚀 X Pulse Bridge with Voice Output (Phase 1)")
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("BRIDGE_PORT", 8001)))
