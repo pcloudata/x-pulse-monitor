@@ -6,13 +6,16 @@
     "build": "turbo run build",
     "cli": "turbo run cli --filter=cli --",
     "cli:init": "turbo run init --filter=cli --",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "lint": "turbo run lint"
   },
   "devDependencies": {
-    "turbo": "latest"
+    "@vitest/ui": "^2.1.9",
+    "commander": "^12.1.0",
+    "jsdom": "^29.0.1",
+    "turbo": "latest",
+    "vitest": "^2.1.9"
   },
-  "packageManager": "pnpm@9.0.0",
-  "dependencies": {
-    "arweave": "^1.15.7"
-  }
+  "packageManager": "pnpm@9.0.0"
 }
